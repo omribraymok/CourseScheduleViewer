@@ -75,8 +75,14 @@
                    var td = $("<td/>");
                    td.text("row_" + rowNumber + "_column_" + dayNumber);
                    td.attr('id', "row_" + rowNumber + "_column_" + dayNumber);
-
-                   td.attr('onclick', "PrintID(this)");
+                   td.attr('onclick', "OnCellInScheduleTableClick(this)");
+                   //add buttom
+                   var btn = document.createElement('input');
+                   btn.type = "button";
+                   btn.value = "Remove";
+                   btn.style = "display:none";
+                   btn.id = "btn_row_" + rowNumber + "_column_" + dayNumber
+                   td.append(btn);
                    tr.append(td);
                }
                var th = $("<th/>");
@@ -87,8 +93,36 @@
 
        }
 
-       function PrintID(element) {
-          window.alert(element.id);
+       function OnCellInScheduleTableClick(element) {
+           if (element.text != "")
+           {
+               //if not empty show my button
+             //document.getElementById("btn_" + element.id).style = "display:block";
+
+              ShowOnlyThisCellBtn(element);
+           }
+       }
+       function ShowOnlyThisCellBtn(element)
+       {
+           var cellBtnId = "btn_" + element.id;
+           document.getElementById(cellBtnId).style = "display:block";
+           for (var rowNumber = 1; rowNumber <= 12; rowNumber++) // number of row (hours)
+           {
+               for (var dayNumber = 6; dayNumber >= 1; dayNumber--) // number of row (hours)
+               {
+                   var btnCell = document.getElementById("btn_row_" + rowNumber + "_column_" + dayNumber)
+
+                   if (btnCell.id.localeCompare(cellBtnId))
+                   {
+                       //remove the remove btn from diffrent cell
+                       // if there are equal, will not enter
+                       btnCell.style = "display:none";
+                   }
+
+               }
+
+           }
+
        }
 
 
