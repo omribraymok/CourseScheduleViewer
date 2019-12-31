@@ -50,7 +50,9 @@
        var correntCourseLecturesShownID = "00000";
        var dayToNumber = { "ראשון": 1, "שני": 2, "שלישי": 3, "רביעי": 4, "חמישי": 5, "שישי": 6 };
        var numberToDay = { 1: "ראשון", 2: "שני", 3: "שלישי", 4: "רביעי", 5: "חמישי", 6: "שישי" };
-       var hourToNumber = {"8:30":1,"9:30":2,"10:30":3,"11:30":4,"12:50":5,"13:50":6,"14:50":7,"15:50":8,"16:50":9,"17:50":10,"18:50":11,"19:50":12}
+       var hourToNumberStrart = { "08:30": 1, "09:30": 2, "10:30": 3, "11:30": 4, "12:50": 5, "13:50": 6, "14:50": 7, "15:50": 8, "16:50": 9, "17:50": 10, "18:50": 11, "19:50": 12 }
+       var hourToNumberEnd = {"08:30":1,"09:30":2,"10:30":3,"11:30":4,"12:20":5,"13:50":6,"14:50":7,"15:50":8,"16:50":9,"17:50":10,"18:50":11,"19:50":12}
+
        var numberToHour = { 1: "8:30", 2: "9:30", 3: "10:30", 4: "11:30", 5: "12:50", 6: "13:50", 7: "14:50", 8: "15:50", 9: "16:50", 10: "17:50", 11: "18:50", 12: "19:50" }
        var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
 
@@ -197,23 +199,25 @@
            });
            
        }
-       function BuildLectureTamplateTable(divElement,coursID)
-       {
-           var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
-           var table = document.createElement('table');
-           thead = table.createTHead();
-           table.id = "LecTb_" + coursID;
 
-           var tr = thead.insertRow(0);
-           //for (var i = 8; i >= 1; i--)
-           {
-               //fill the row with the lecture Value
-           }
-           var th = document.createElement("TD");
-           tr.append(th);
+       //function BuildLectureTamplateTable(divElement,coursID)
+       //{
+       //    var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
+       //    var table = document.createElement('table');
+       //    thead = table.createTHead();
+       //    table.id = "LecTb_" + coursID;
 
-           divElement.append(table);
-       }
+       //    var tr = thead.insertRow(0);
+       //    //for (var i = 8; i >= 1; i--)
+       //    {
+       //        //fill the row with the lecture Value
+       //    }
+       //    var th = document.createElement("TD");
+       //    tr.append(th);
+
+       //    divElement.append(table);
+       //}
+
        function ShowCourseTable()
        {
            $("#tCourses").attr('style', "display:block");
@@ -231,9 +235,31 @@
 
        function LoadLectureIntoScheduleTable(trElement)
        {
-          var LectureDic = CreateLectureDictionaryFromRow(trElement)
+           var LectureDic = CreateLectureDictionaryFromRow(trElement)
+           window.alert(IsLecturePlaceAvailable(LectureDic));
+           
        }
+       function IsLecturePlaceAvailable(lecturDic)
+       {
+           var lectureDay = lecturDic[6];
+           var lectureStratTime = lecturDic[7];
+           var lectureEndTime = lecturDic[8];
 
+           var dayCellNum = dayToNumber[lectureDay];
+           var startCellNum = hourToNumberStrart[lectureStratTime];
+           var endCellNum = hourToNumberEnd[lectureEndTime];
+
+           for (var i = startCellNum; i < endCellNum; i++)
+           {
+               var cellID = "row_" + i + "_column_" + dayCellNum;
+               var dt = $("#" + cellID).eq(0);
+               if (dt[0].textContent != "") {
+                   return false;
+               }
+           }
+           return true;
+
+       }
        function CreateLectureDictionary(lecture)
        {
            var LectureDic = {};
