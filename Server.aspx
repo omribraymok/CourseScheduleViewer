@@ -54,9 +54,9 @@
        var hourToNumberEnd = {"08:30":1,"09:30":2,"10:30":3,"11:30":4,"12:20":5,"13:50":6,"14:50":7,"15:50":8,"16:50":9,"17:50":10,"18:50":11,"19:50":12}
 
        var numberToHour = { 1: "8:30", 2: "9:30", 3: "10:30", 4: "11:30", 5: "12:50", 6: "13:50", 7: "14:50", 8: "15:50", 9: "16:50", 10: "17:50", 11: "18:50", 12: "19:50" }
-       var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
-       var NumberTovalueInLectureHeb = {1:"מס הקורס", 2:"שם", 3:"מרצה" , 4:"סוג" , 5:"כתה", 6: "יום", 7:"שעת התחלה", 8:"שעת סיום" }
-
+       var NumberToValueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
+       var NumberToValueInLectureHeb = {1:"מס הקורס", 2:"שם", 3:"מרצה" , 4:"סוג" , 5:"כתה", 6: "יום", 7:"שעת התחלה", 8:"שעת סיום" }
+       var MyLectureInScheduleTable = [];
 
 
        $(function () {
@@ -147,6 +147,11 @@
                    btn.value = "Remove";
                    btn.style = "display:none";
                    btn.id = "btn_row_" + rowNumber + "_column_" + dayNumber
+                   //create lambda expression for onclick event;
+                   btn.onclick = function ()
+                   {
+                       RemoveLectureByCell(this);
+                   };
                    td.append(btn);
                    tr.append(td);
                }
@@ -156,6 +161,67 @@
                $("#tScheduleLecture").find("tbody").append(tr);
            }
 
+       }
+
+
+       function RemoveLectureByCell(btnElement)
+       {
+           btnElement.style = "display:none";
+           var cellId = btnElement.id.substring(4);  //substract the btn_
+           var cellElement = document.getElementById(cellId);
+           var PartialLectureDataFromCell = GetPartialLectureFromCell(cellElement);
+           RemoveLecture(PartialLectureDataFromCell);
+           
+       }
+
+       function RemoveLecture(partialLecture)
+       {
+           //find lecture in MyLectureInScheduleTable
+           var removedLecture;
+           for (var i = 0; i < MyLectureInScheduleTable.length;i++)
+           {
+               var equals = true;
+               for (var j = 1; j <= Object.keys(partialLecture).length; j++)
+               {
+                   if (partialLecture[j] != MyLectureInScheduleTable[i][NumberToValueInLecture[j]])
+                   {
+                       equals = false;
+                       break;
+                   }
+               }
+               if (equals)
+               {
+                   removedLecture = MyLectureInScheduleTable.splice(i, 1);
+                   removeLectureFromTable(removedLecture[0]);
+                   return;
+               }
+           }
+       }
+
+       function removeLectureFromTable(removedLecture)
+       {
+           
+           var lectureDay = removedLecture[NumberToValueInLecture[6]];
+           var lectureStratTime = removedLecture[NumberToValueInLecture[7]];
+           var lectureEndTime = removedLecture[NumberToValueInLecture[8]];
+
+           var dayCellNum = dayToNumber[lectureDay];
+           var startCellNum = hourToNumberStrart[lectureStratTime];
+           var endCellNum = hourToNumberEnd[lectureEndTime];
+
+           for (var i = startCellNum; i < endCellNum; i++)
+           {
+               var cellID = "row_" + i + "_column_" + dayCellNum;
+               var dt = $("#" + cellID).eq(0);
+               var dt = dt[0];
+               //find label array
+               var labelArray = $(dt).find("label");
+               $.each(labelArray, function (labelIndex, label) {
+                   label.remove();
+               }
+               );
+            
+           }
        }
        function OnCellInScheduleTableClick(element) {
            if (element.textContent != "")
@@ -180,11 +246,8 @@
                        // if there are equal, will not enter
                        btnCell.style = "display:none";
                    }
-
                }
-
            }
-
        }
        function BuildLecturesTable()
        {
@@ -222,11 +285,28 @@
            noEroor = noEroor & IsLecturePlaceAvailable(LectureDic);
            if (noEroor)
            {
-               InsertLectureIntoCell(LectureDic);
+               InsertLectureToScheduleTable(LectureDic);
            }
 
        }
 
+       function InsertLectureToScheduleTable(LectureDic)
+       {
+           //insert the lecture into the local var
+       MyLectureInScheduleTable.push(ConvertLectureToScheduleLecture(LectureDic));
+           //insert the lecture in to the cell
+        InsertLectureIntoCell(LectureDic);
+
+       }
+       function ConvertLectureToScheduleLecture(LectureDic)
+       {
+           var lecture = {};
+           for (var i = 1; i <= Object.keys(NumberToValueInLecture).length; i++)
+           {
+               lecture[NumberToValueInLecture[i]] = LectureDic[i];
+           }
+           return lecture;
+       }
        function InsertLectureIntoCell(LectureDic)
        {
            var lectureDay = LectureDic[6];
@@ -247,12 +327,10 @@
                for (var j = 5; j >= 1; j--) {
                    var label = document.createElement("LABEL");
                    label.style = "display:block;direction:rtl";
-                   label.innerHTML =  NumberTovalueInLectureHeb[j]  + ":"+  LectureDic[j];
+                   label.innerHTML =  NumberToValueInLectureHeb[j]  + ":"+  LectureDic[j];
                    dt.insertBefore(label, dt.firstChild);
                }
-               
             
-               
            }
        }
 
@@ -286,22 +364,22 @@
                switch (i)
                {
                case 6:
-                   var dayDictionary = lecture[NumberTovalueInLecture[i]];
+                   var dayDictionary = lecture[NumberToValueInLecture[i]];
                    LectureDic[i] = (dayDictionary["name"]);
 
                    break;
                case 7 :
-                   var dayDictionary = lecture[NumberTovalueInLecture[i]];
+                   var dayDictionary = lecture[NumberToValueInLecture[i]];
                    LectureDic[i] = dayDictionary["hour"];
                    break;
 
                case 8 :
-                   var dayDictionary = lecture[NumberTovalueInLecture[i]];
+                   var dayDictionary = lecture[NumberToValueInLecture[i]];
                    LectureDic[i] = dayDictionary["hour"];
                    break;
 
                default:
-                   LectureDic[i] = (lecture[NumberTovalueInLecture[i]]);
+                   LectureDic[i] = (lecture[NumberToValueInLecture[i]]);
                                
                }
            }
@@ -327,9 +405,9 @@
            var partialLectur = {};
            // get all the labels from the th
            var label = $(cellElement).find("label");
-           for (var i = 0; i < label.length; i++) {
+           for (var i = 1; i <= label.length; i++) {
                //get the value from the label in the table.
-               var value = label[i].innerHTML.split(":")[1];
+               var value = label[i-1].innerHTML.split(":")[1];
                partialLectur[i] = value;
            }
            return partialLectur;
