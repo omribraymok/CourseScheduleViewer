@@ -55,6 +55,7 @@
 
        var numberToHour = { 1: "8:30", 2: "9:30", 3: "10:30", 4: "11:30", 5: "12:50", 6: "13:50", 7: "14:50", 8: "15:50", 9: "16:50", 10: "17:50", 11: "18:50", 12: "19:50" }
        var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
+       var NumberTovalueInLectureHeb = {1:"מס הקורס", 2:"שם", 3:"מרצה" , 4:"סוג" , 5:"כתה", 6: "יום", 7:"שעת התחלה", 8:"שעת סיום" }
 
 
 
@@ -161,6 +162,7 @@
            {
                ShowOnlyThisCellBtn(element);
            }
+           GetPartialLectureFromCell(element);
        }
        function ShowOnlyThisCellBtn(element)
        {
@@ -199,25 +201,6 @@
            });
            
        }
-
-       //function BuildLectureTamplateTable(divElement,coursID)
-       //{
-       //    var NumberTovalueInLecture = {1:"ID", 2:"CourseName", 3:"lecturer" , 4:"type" , 5:"classlec", 6: "day", 7:"startTime", 8:"endTime" }
-       //    var table = document.createElement('table');
-       //    thead = table.createTHead();
-       //    table.id = "LecTb_" + coursID;
-
-       //    var tr = thead.insertRow(0);
-       //    //for (var i = 8; i >= 1; i--)
-       //    {
-       //        //fill the row with the lecture Value
-       //    }
-       //    var th = document.createElement("TD");
-       //    tr.append(th);
-
-       //    divElement.append(table);
-       //}
-
        function ShowCourseTable()
        {
            $("#tCourses").attr('style', "display:block");
@@ -233,12 +216,46 @@
            }
        }
 
-       function LoadLectureIntoScheduleTable(trElement)
-       {
-           var LectureDic = CreateLectureDictionaryFromRow(trElement)
-           window.alert(IsLecturePlaceAvailable(LectureDic));
-           
+       function LoadLectureIntoScheduleTable(trElement) {
+           var LectureDic = CreateLectureDictionaryFromRow(trElement);
+           var noEroor = true;
+           noEroor = noEroor & IsLecturePlaceAvailable(LectureDic);
+           if (noEroor)
+           {
+               InsertLectureIntoCell(LectureDic);
+           }
+
        }
+
+       function InsertLectureIntoCell(LectureDic)
+       {
+           var lectureDay = LectureDic[6];
+           var lectureStratTime = LectureDic[7];
+           var lectureEndTime = LectureDic[8];
+
+           var dayCellNum = dayToNumber[lectureDay];
+           var startCellNum = hourToNumberStrart[lectureStratTime];
+           var endCellNum = hourToNumberEnd[lectureEndTime];
+
+           for (var i = startCellNum; i < endCellNum; i++)
+           {
+               var cellID = "row_" + i + "_column_" + dayCellNum;
+               var dt = $("#" + cellID).eq(0);
+               var dt = dt[0];
+               var string = "";
+               //build label to fill the Lecture Data
+               for (var j = 5; j >= 1; j--) {
+                   var label = document.createElement("LABEL");
+                   label.style = "display:block;direction:rtl";
+                   label.innerHTML =  NumberTovalueInLectureHeb[j]  + ":"+  LectureDic[j];
+                   dt.insertBefore(label, dt.firstChild);
+               }
+               
+            
+               
+           }
+       }
+
        function IsLecturePlaceAvailable(lecturDic)
        {
            var lectureDay = lecturDic[6];
@@ -253,7 +270,8 @@
            {
                var cellID = "row_" + i + "_column_" + dayCellNum;
                var dt = $("#" + cellID).eq(0);
-               if (dt[0].textContent != "") {
+               var label = $(dt).find("label");
+               if (label.length) {
                    return false;
                }
            }
@@ -301,6 +319,20 @@
                j++;
            }
            return LectureDic;
+       }
+
+       function GetPartialLectureFromCell(cellElement)
+       {
+
+           var partialLectur = {};
+           // get all the labels from the th
+           var label = $(cellElement).find("label");
+           for (var i = 0; i < label.length; i++) {
+               //get the value from the label in the table.
+               var value = label[i].innerHTML.split(":")[1];
+               partialLectur[i] = value;
+           }
+           return partialLectur;
        }
 
    </script>
