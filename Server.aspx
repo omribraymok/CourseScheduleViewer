@@ -29,6 +29,16 @@
 
         })
     </script>--%> <%--script not working to pull jason from server--%>
+    <style>
+          .remove {
+     
+          background-color: red;
+        }
+        .remove:hover {
+        border: 1px solid red;
+          background-color: red;
+        }
+    </style>
    <script>
 
        class LecturePartial {
@@ -75,6 +85,7 @@
            btn.style = "display:none";
            btn.value = "Back to courses list";
            btn.onclick = ShowCourseTable;
+           btn.className = "btn btn-info";
            mainViewDiv.append(btn);
        }
        function BuildCourseTable()
@@ -105,8 +116,8 @@
            LoadAllLecturesOfCourse(courseID);
            //hide corses table , and show lecturer insted
            $("#tCourses").attr('style', "display:none");
-           $("#tLecture").attr('style', "display:block");
-           $("#btnBackToCoursesTable").attr('style', "display:block");
+           $("#divLecture").attr('style', "");
+           $("#btnBackToCoursesTable").attr('style', "display:inline-block");
        }
 
        function LoadAllLecturesOfCourse(courseID)
@@ -147,6 +158,9 @@
                    btn.value = "Remove";
                    btn.style = "display:none";
                    btn.id = "btn_row_" + rowNumber + "_column_" + dayNumber
+                   btn.className = "btn btn-info";
+                   btn.classList.add("remove");
+
                    //create lambda expression for onclick event;
                    btn.onclick = function ()
                    {
@@ -233,7 +247,7 @@
        function ShowOnlyThisCellBtn(element)
        {
            var cellBtnId = "btn_" + element.id;
-           document.getElementById(cellBtnId).style = "display:block";
+           document.getElementById(cellBtnId).style = "display:inline-block";
            for (var rowNumber = 1; rowNumber <= 12; rowNumber++) // number of row (hours)
            {
                for (var dayNumber = 6; dayNumber >= 1; dayNumber--) // number of row (hours)
@@ -266,10 +280,11 @@
        }
        function ShowCourseTable()
        {
-           $("#tCourses").attr('style', "display:block");
-           $("#tLecture").attr('style', "display:none");
+           $("#tCourses").attr('style', "");
+           $("#divLecture").attr('style', "display:none");
            $("#btnBackToCoursesTable").attr('style', "display:none");
            ClearLectureFromTable();
+           clearLectureErDiv();
        }
        function ClearLectureFromTable() {
            var trArray = $("#tLecture").find("tbody tr");
@@ -280,16 +295,40 @@
        }
 
        function LoadLectureIntoScheduleTable(trElement) {
+           clearLectureErDiv();
            var LectureDic = CreateLectureDictionaryFromRow(trElement);
-           var noEroor = true;
-           noEroor = noEroor & IsLecturePlaceAvailable(LectureDic);
-           if (noEroor)
+           var ErrorText = "";
+           ErrorText = IsLecturePlaceAvailable(LectureDic);
+           ErrorText = ErrorText + IsLectureTypeAvailable(LectureDic);
+           if (ErrorText !="")
            {
-               InsertLectureToScheduleTable(LectureDic);
+               AddErrorToLecture(ErrorText);
+               return;
            }
+           
+            InsertLectureToScheduleTable(LectureDic);
+           
 
        }
-
+       function AddErrorToLecture(ErrorText)
+       {
+           var div = $("#LectureEr").eq(0);
+           var label = document.createElement("LABEL");
+           label.style = "display:block;direction:rtl";
+           label.className = "text-warning";
+           label.innerHTML = ErrorText;
+           div.append(label);
+           
+       }
+       function clearLectureErDiv()
+       {
+            var div = $("#LectureEr").eq(0);
+            var labelArray = $(div).find("label");
+            $.each(labelArray, function (labelIndex, label) {
+            label.remove();
+               }
+               );
+       }
        function InsertLectureToScheduleTable(LectureDic)
        {
            //insert the lecture into the local var
@@ -350,11 +389,24 @@
                var dt = $("#" + cellID).eq(0);
                var label = $(dt).find("label");
                if (label.length) {
-                   return false;
+                   return ( " לא ניתן להוסיף הרצאה זו בשל חפיפה בשעה" + ": " +  numberToHour[i]);
                }
            }
-           return true;
+           return "";
+       }
+       function IsLectureTypeAvailable(lecturDic)
+       {
+           var lectureId = lecturDic[1];
+           var lectureType= lecturDic[4];
 
+
+           for (var i = 0; i < MyLectureInScheduleTable.length; i++)
+           {
+               if (MyLectureInScheduleTable[i][NumberToValueInLecture[1]] == lectureId && MyLectureInScheduleTable[i][NumberToValueInLecture[4]] == lectureType ) {
+                   return ( "לא ניתן להוסיף הרצאה זו בשל המצאות הרצאה מסוג זה" + ": " + lectureType);
+               }
+           }
+           return "";
        }
        function CreateLectureDictionary(lecture)
        {
@@ -449,7 +501,7 @@
         </div>
     </form>
 
-<div id="MianView" style="float:none;">
+<div id="MianView" class ="container" style="float:none;">
         <div style="float:none;">
 
     <table id="tScheduleLecture"  class="table table-bordered table-sm" style="margin-top:20px;">
@@ -467,11 +519,14 @@
         <tbody>
         </tbody>
     </table>
+   
+          <%--margin div--%>
+            </div>
+    <div style="margin-top:100px;">
     </div>
+<div style="float:none;width:100% ">
 
-<div style="float:none;">
-
-            <table id="tCourses" class="table table-bordered table-sm" style="margin-top:20px;">
+            <table id="tCourses"  class="table table-bordered table-sm" >
                 <thead>
                 <tr>
                     <th style="width:30px">N#</th>
@@ -487,7 +542,7 @@
         
     </div>
 
-    <div style="float:none;">
+    <div id ="divLecture" style="float:none;">
 
         <table id="tLecture"  class="table table-bordered table-sm" style="margin-top:20px;">
             <thead>
@@ -506,6 +561,9 @@
             <tbody>
             </tbody>
         </table>
+        <div id="LectureEr" style="float:right" >
+
+        </div>
     </div>
     
 
