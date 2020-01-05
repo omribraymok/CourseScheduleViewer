@@ -38,6 +38,7 @@
         border: 1px solid red;
           background-color: red;
         }
+
     </style>
    <script>
 
@@ -298,24 +299,30 @@
            clearLectureErDiv();
            var LectureDic = CreateLectureDictionaryFromRow(trElement);
            var ErrorText = "";
-           ErrorText = IsLecturePlaceAvailable(LectureDic);
-           ErrorText = ErrorText + IsLectureTypeAvailable(LectureDic);
-           if (ErrorText !="")
+           IsLecturePlaceAvailable(LectureDic);
+           IsLectureTypeAvailable(LectureDic);
+           //verify no error
+           var div = $("#LectureEr").eq(0);
+           var label = $(div).find("label");
+           if (!label.length)
            {
-               AddErrorToLecture(ErrorText);
-               return;
+               InsertLectureToScheduleTable(LectureDic);
+               //add success message
+               
+               var label = document.createElement("LABEL");
+               label.style = "display:block;direction:rtl";
+               label.className = "text-success";
+               label.innerHTML = "ההרצאה נוספה בהצלחה";
+               div.append(label);
            }
-           
-            InsertLectureToScheduleTable(LectureDic);
-           
-
        }
+
        function AddErrorToLecture(ErrorText)
        {
            var div = $("#LectureEr").eq(0);
            var label = document.createElement("LABEL");
            label.style = "display:block;direction:rtl";
-           label.className = "text-warning";
+           label.className = "text-danger";
            label.innerHTML = ErrorText;
            div.append(label);
            
@@ -389,10 +396,10 @@
                var dt = $("#" + cellID).eq(0);
                var label = $(dt).find("label");
                if (label.length) {
-                   return ( " לא ניתן להוסיף הרצאה זו בשל חפיפה בשעה" + ": " +  numberToHour[i]);
+                   AddErrorToLecture(" לא ניתן להוסיף הרצאה זו בשל חפיפה בשעה" + ": " + numberToHour[i]);
+                   return;
                }
            }
-           return "";
        }
        function IsLectureTypeAvailable(lecturDic)
        {
@@ -403,10 +410,11 @@
            for (var i = 0; i < MyLectureInScheduleTable.length; i++)
            {
                if (MyLectureInScheduleTable[i][NumberToValueInLecture[1]] == lectureId && MyLectureInScheduleTable[i][NumberToValueInLecture[4]] == lectureType ) {
-                   return ( "לא ניתן להוסיף הרצאה זו בשל המצאות הרצאה מסוג זה" + ": " + lectureType);
+                   AddErrorToLecture("לא ניתן להוסיף הרצאה זו בשל המצאות הרצאה מסוג זה" + ": " + lectureType);
+                   return;
                }
            }
-           return "";
+           
        }
        function CreateLectureDictionary(lecture)
        {
