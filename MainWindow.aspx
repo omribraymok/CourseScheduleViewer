@@ -6,28 +6,9 @@
     <%--bootstrapcdn - in google - this is the palce we took this link, for the css class--%>
     <link rel ="stylesheet" href ="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <script src="inc/jquery-3.0.0.min.js"></script>
-<%--    <script type = "text/javascript">
-        $(function ()
-        {
-        // request data from service
-        $.ajax({
-        url: "webservice.asmx/GetCourses",
-        //data: {
-        //    symbol: "BTC"
-        //},
-        type: 'GET',
-        success: function (res) {
-        var s = res.documentElement.innerHTML;
-        console.log(s);
-        var data = JSON.parse(s);
-        },
-        error: function (er) {
-        console.log(er);
-        }
-        });
-
-        })
-    </script>--%> <%--script not working to pull jason from server--%>
+     
+        
+  
     <style>
           .remove {
      
@@ -188,8 +169,48 @@
            }
 
        }
+       function SaveScheduleTable()
+        {
+        $.ajax({
+            url: "webservice.asmx/SaveScheduleTable",
+            data: { CoursesArray: JSON.stringify(MyLectureInScheduleTable) },
+            dataType: 'json',
+        type: 'POST',
+        success: function (res) {
+       
+        },
+        error: function (er) {
+        console.log(er);
+        }
+        });
 
+       }
+       function LoadScheduleTable()
+        {
+        $.ajax({
+            url: "webservice.asmx/LoadScheduleTable",
+        type: 'GET',
+        success: function (res) {
+  
+             var s = res.documentElement.innerHTML;
+            window.alert(s);
+        },
+        error: function (er) {
+        console.log(er);
+        }
+        });
 
+       }
+       function ClearScheduleTable()
+       {
+           MyLectureInScheduleTable = [];
+           var labelArray = $("#tScheduleLecture").find("tbody tr td label");
+               $.each(labelArray, function (labelIndex, label) {
+                   label.remove();
+               }
+           );
+
+       }
        function RemoveLectureByCell(btnElement)
        {
            btnElement.style = "display:none";
@@ -508,10 +529,15 @@
         <tbody>
         </tbody>
     </table>
-   
+<input type ="button" class="btn btn-info" onclick="ClearScheduleTable()"  value="Clear"/>
+<input type ="button" class="btn btn-info" onclick="SaveScheduleTable()"  value="Save"/>
+<input type ="button" class="btn btn-info" onclick="LoadScheduleTable()"  value="Load"/>
+
+
+            
           <%--margin div--%>
             </div>
-    <div style="margin-top:100px;">
+    <div style="margin-top:60px;">
     </div>
 <div style="float:none;width:100% ">
 

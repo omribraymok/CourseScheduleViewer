@@ -7,7 +7,28 @@
     <%--bootstrapcdn - in google - this is the palce we took this link, for the css class--%>
     <link rel ="stylesheet" href ="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <script src="inc/jquery-3.0.0.min.js"></script>
+<%--    <script>
 
+        $(function () {
+            // request data from service
+            $.ajax({
+                url: "webservice.asmx/GetCourses",
+                //data: {
+                //    symbol: "BTC"
+                //},
+                type: 'GET',
+                success: function (res) {
+                    var s = res.documentElement.innerHTML;
+                    console.log(s);
+                    CreateTable(s);
+                },
+                error: function (er) {
+                    console.log(er);
+                }
+            });
+
+        })
+         </script>--%>
 
         </head >
 <body>

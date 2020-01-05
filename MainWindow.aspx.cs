@@ -13,5 +13,10 @@ namespace LAB8
         {
 
         }
+
+        protected void SaveScheduleTable_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
