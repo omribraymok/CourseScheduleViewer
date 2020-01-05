@@ -19,7 +19,7 @@ namespace LAB8
             //ispostback - if we did sumbit post back = true; and then , we dont enter here again, only on first time
             if (!IsPostBack)
             {
-                ShowHome(false);
+                
             }
 
 
@@ -29,28 +29,13 @@ namespace LAB8
         {
             if (tbUsername.Text == "elraz" && tbPassword.Text == "123")
             {
-                lbError.Visible = false;
-                ShowHome(true);
+                Response.Redirect("MainWindow.aspx");
             }
             else
             {
-                ShowHome(false);
+                
                 lbError.Visible = true;
             }
-        }
-
-        protected void btnLogout_Click(object sender, EventArgs e)
-        {
-            ShowHome(false);
-        }
-
-        private void ShowHome(bool isIdentified)
-
-        {
-            pnlLogin.Visible = !isIdentified;
-            PnlHome.Visible = isIdentified;
-
-
         }
 
 
