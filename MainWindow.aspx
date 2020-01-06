@@ -96,7 +96,7 @@
            correntCourseLecturesShownID = courseID;
            LoadAllLecturesOfCourse(courseID);
            //hide corses table , and show lecturer insted
-           $("#tCourses").attr('style', "display:none");
+           $("#divCourses").attr('style', "display:none");
            $("#divLecture").attr('style', "");
            $("#btnBackToCoursesTable").attr('style', "display:inline-block");
        }
@@ -314,7 +314,7 @@
        }
        function ShowCourseTable()
        {
-           $("#tCourses").attr('style', "");
+           $("#divCourses").attr('style', "");
            $("#divLecture").attr('style', "display:none");
            $("#btnBackToCoursesTable").attr('style', "display:none");
            ClearLectureFromTable();
@@ -506,6 +506,42 @@
            return partialLectur;
        }
 
+       function SerchInTable() {
+           var searchKey = $("#tbSearch").val();
+           if (searchKey == "") {
+               ShowAllCourseInTable();
+           } else
+           {
+               ShowPartialCourseInTable(searchKey);
+           }
+       }
+
+       function ShowAllCourseInTable()
+       {
+           $.each($("#tCourses tbody tr"), function (i, o) {
+               $(o).attr('style', "");
+            });
+       }
+       function ShowPartialCourseInTable(searchKey)
+       {
+           $.each($("#tCourses tbody tr"), function (i, o) {
+               var contains = false;
+               var tdArray = $(o).find("td");
+               $.each(tdArray,
+                   function(dtIndex, td) {
+                       if (td.textContent.includes(searchKey)) {
+                           contains = true;
+                       }
+                   });
+               if (!contains)
+               {
+                   $(o).attr('style', "display:none");
+               }
+           });
+
+
+       }
+
    </script>
         </head >
 <body>
@@ -540,9 +576,14 @@
     <div style="margin-top:60px;">
     </div>
 <div style="float:none;width:100% ">
-
+    <div id ="divCourses"> 
+    <div class="input-group" style="float:right;">
+        <input id="tbSearch" style="float:right;" type="text"  aria-label="With textarea" onkeyup="SerchInTable()">
+        <span style="float:right;" class="input-group-text"> חיפוש על פי טקסט</span>
+            </div>
             <table id="tCourses"  class="table table-bordered table-sm" >
                 <thead>
+
                 <tr>
                     <th style="width:30px">N#</th>
                     <th style="width:120px">ID</th>
@@ -553,9 +594,8 @@
 
                 </tbody>
             </table>
-
-        
     </div>
+</div>
 
     <div id ="divLecture" style="float:none;display:none;">
 

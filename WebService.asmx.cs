@@ -36,6 +36,7 @@ namespace LAB8
             //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
             //return File.ReadAllText(path);
             //return JsonConvert.SerializeObject(temptable);
+            return temptable;
         }
     }
 }
