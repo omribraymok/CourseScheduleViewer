@@ -21,24 +21,38 @@ namespace LAB8
 
     public class WebService : System.Web.Services.WebService
     {
-        public string temptable = "";
-        [WebMethod]
+   
+        [WebMethod(EnableSession = true)]
         public void SaveScheduleTable(string CoursesArray)
         {
-            //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
-            //return File.ReadAllText(path);
-            var data = JsonConvert.DeserializeObject(CoursesArray);
-            Application["data"] = data;
+            using (var db = new webProjectDBEntities())
+            {
+                //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
+                //return File.ReadAllText(path);
+                var scheduleTable = JsonConvert.DeserializeObject(CoursesArray);
+                var scheduleTablejson = JsonConvert.DeserializeObject(scheduleTable.ToString());
+
+                var userName = ((tbAccount)Session["Account"]).UserName;
+                tbAccount account = db.tbAccounts.FirstOrDefault(u => u.UserName == userName); 
+                account.ScheduleTable = scheduleTablejson.ToString();
+                Session["Account"] = account;
+                db.SaveChanges();
+            }
+
         }
 
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public string LoadScheduleTable()
         {
             //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
             //return File.ReadAllText(path);
             //return JsonConvert.SerializeObject(temptable);
-            var temptablejson = JsonConvert.DeserializeObject(Application["data"].ToString());
-            return temptablejson.ToString();
+            using (var db = new webProjectDBEntities())
+            {
+                var userName = ((tbAccount)Session["Account"]).UserName;
+                tbAccount account = db.tbAccounts.FirstOrDefault(u => u.UserName == userName);
+                return account.ScheduleTable;
+            }
         }
     }
 }

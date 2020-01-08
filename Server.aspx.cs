@@ -16,13 +16,16 @@ namespace LAB8
         {
             lbError.Visible = false;
             lbErrorReg.Visible = false;
+            SuccessRegister.Visible = false;
+
             //ispostback - if we did sumbit post back = true; and then , we dont enter here again, only on first time
             if (!IsPostBack)
             {
-                if (Session["user"] == null)
+                if (Session["Account"] == null)
                 {
                     pnlLogin.Visible = true;
                     pnlRegistr.Visible = false;
+                    SuccessRegister.Visible = false;
                 }
                 else
                     Response.Redirect("MainWindow.aspx");
@@ -44,30 +47,53 @@ namespace LAB8
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            if (tbUsername.Text == "elraz" && tbPassword.Text == "123")
+            using (var db = new webProjectDBEntities())
             {
-                Session["user"] = tbUsername.Text;
-                Response.Redirect("MainWindow.aspx");
+
+                var account = db.tbAccounts.Where(tempAccount => tempAccount.UserName == tbUsername.Text && tempAccount.Password == tbPassword.Text).FirstOrDefault();
+                if (account == null)
+                {
+                    lbError.Visible = true;
+                }
+                else
+                {
+                    Session["Account"] = account;
+                    Response.Redirect("MainWindow.aspx");
+                }
             }
-            else
-            {
                 
-                lbError.Visible = true;
-            }
+
+
         }
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            if (tbUsername.Text == "elraz" && tbPassword.Text == "123")
-            {
-                Session["user"] = tbUsername.Text;
-                Response.Redirect("MainWindow.aspx");
-            }
-            else
+            using (var db = new webProjectDBEntities())
             {
 
-                lbError.Visible = true;
+
+                var account = db.tbAccounts.Where(tempAccount => tempAccount.UserName == tbUsernameReg.Text).ToArray();
+
+                if (account.Length == 0)
+                {
+                    //Session["user"] = tbUsername.Text;
+                    //Response.Redirect("MainWindow.aspx");
+                    var NewAccount = new tbAccount()
+                    {
+                        UserName = tbUsernameReg.Text,
+                        Password = tbPasswordReg.Text
+                    };
+                    db.tbAccounts.Add(NewAccount);
+                    db.SaveChanges();
+                    SuccessRegister.Visible = true;
+                    goToLogin_Click(sender, e);
+                }
+                else
+                {
+                    lbErrorReg.Visible = true;
+                }
             }
+                
         }
 
 

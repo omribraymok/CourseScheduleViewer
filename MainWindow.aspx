@@ -192,12 +192,17 @@
         type: 'GET',
         success: function (res) {
   
-             var s = res.documentElement.innerHTML;
-             ClearScheduleTable();
-                    MyLectureInScheduleTable = JSON.parse(s);
-                    for (var i = 0; i < MyLectureInScheduleTable.length; i++) {
-                        InsertLectureIntoCell(ConvertScheduleLectureToLecture(MyLectureInScheduleTable[i]));
-                    }
+            var s = res.documentElement.innerHTML;
+            if (s == "") {
+                window.alert("no saved courses");
+            }
+            else {
+                ClearScheduleTable();
+                MyLectureInScheduleTable = JSON.parse(s);
+                for (var i = 0; i < MyLectureInScheduleTable.length; i++) {
+                    InsertLectureIntoCell(ConvertScheduleLectureToLecture(MyLectureInScheduleTable[i]));
+                }
+            }
         },
         error: function (er) {
         console.log(er);
