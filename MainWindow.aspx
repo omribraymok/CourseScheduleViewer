@@ -1,26 +1,26 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="MainWindow.aspx.cs" Inherits="LAB8.MainWindow" %>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <%--bootstrapcdn - in google - this is the palce we took this link, for the css class--%>
-    <link rel ="stylesheet" href ="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <script src="inc/jquery-3.0.0.min.js"></script>
-     
-        
-  
+
+
+
     <style>
-          .remove {
-     
-          background-color: red;
-        }
-        .remove:hover {
-        border: 1px solid red;
-          background-color: red;
+        .remove {
+            background-color: red;
         }
 
+            .remove:hover {
+                border: 1px solid red;
+                background-color: red;
+            }
     </style>
-   <script>
+    <script>
 
        class LecturePartial {
            constructor(ID, CourseName ,lecturer ,type ,classlec ,day ="" , startTime = "" ,endTime = ""  ) {
@@ -193,7 +193,11 @@
         success: function (res) {
   
              var s = res.documentElement.innerHTML;
-            window.alert(s);
+             ClearScheduleTable();
+                    MyLectureInScheduleTable = JSON.parse(s);
+                    for (var i = 0; i < MyLectureInScheduleTable.length; i++) {
+                        InsertLectureIntoCell(ConvertScheduleLectureToLecture(MyLectureInScheduleTable[i]));
+                    }
         },
         error: function (er) {
         console.log(er);
@@ -222,6 +226,13 @@
            
        }
 
+function ConvertScheduleLectureToLecture(ScheduleLecture) {
+            var lectureDic = {};
+            for (var i = 1; i <= Object.keys(NumberToValueInLecture).length; i++) {
+                lectureDic[i] = ScheduleLecture[NumberToValueInLecture[i]];
+            }
+            return lectureDic;
+        }
        function RemoveLecture(partialLecture)
        {
            //find lecture in MyLectureInScheduleTable
@@ -542,89 +553,87 @@
 
        }
 
-   </script>
-        </head >
+    </script>
+</head>
 <body>
-<div id="MianView" class ="container" style="float:none;">
-        <div style="float:inherit;">
-             <div style="float:right;">
-            <p class="h1">ניהול מערכת שעות</p>
-                 </div>
-    <table id="tScheduleLecture"  class="table table-bordered table-sm" style="margin-top:20px;">
-        <thead>
-        <tr>
-            <th style="width:120px">שישי</th>
-            <th style="width:120px">חמישי</th>
-            <th style="width:120px">רביעי</th>
-            <th style="width:120px">שלישי</th>
-            <th style="width:120px">שני</th>
-            <th style="width:120px">ראשון</th>
-            <th style="width:30px">שעה</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-<input type ="button" class="btn btn-info" onclick="ClearScheduleTable()"  value="Clear"/>
-<input type ="button" class="btn btn-info" onclick="SaveScheduleTable()"  value="Save"/>
-<input type ="button" class="btn btn-info" onclick="LoadScheduleTable()"  value="Load"/>
-
-
-            
-          <%--margin div--%>
+    <div id="MianView" class="container" style="float: none;">
+        <div style="float: inherit;">
+            <div style="float: right;">
+                <p class="h1">ניהול מערכת שעות</p>
             </div>
-    <div style="margin-top:60px;">
-    </div>
-<div style="float:none;width:100% ">
-    <div id ="divCourses"> 
-    <div class="input-group" style="float:right;">
-        <input id="tbSearch" style="float:right;" type="text"  aria-label="With textarea" onkeyup="SerchInTable()">
-        <span style="float:right;" class="input-group-text"> חיפוש על פי טקסט</span>
-            </div>
-            <table id="tCourses"  class="table table-bordered table-sm" >
+            <table id="tScheduleLecture" class="table table-bordered table-sm" style="margin-top: 20px;">
                 <thead>
-
-                <tr>
-                    <th style="width:30px">N#</th>
-                    <th style="width:120px">ID</th>
-                    <th style="width:120px">NameOfCourse</th>
-                </tr>
+                    <tr>
+                        <th style="width: 120px">שישי</th>
+                        <th style="width: 120px">חמישי</th>
+                        <th style="width: 120px">רביעי</th>
+                        <th style="width: 120px">שלישי</th>
+                        <th style="width: 120px">שני</th>
+                        <th style="width: 120px">ראשון</th>
+                        <th style="width: 30px">שעה</th>
+                    </tr>
                 </thead>
                 <tbody>
-
                 </tbody>
             </table>
-    </div>
-</div>
+            <input type="button" class="btn btn-info" onclick="ClearScheduleTable()" value="Clear" />
+            <input type="button" class="btn btn-info" onclick="SaveScheduleTable()" value="Save" />
+            <input type="button" class="btn btn-info" onclick="LoadScheduleTable()" value="Load" />
 
-    <div id ="divLecture" style="float:none;display:none;">
 
-        <table id="tLecture"  class="table table-bordered table-sm" style="margin-top:20px;">
-            <thead>
-            <tr>
-                <th style="width:120px">endTime</th>
-                <th style="width:120px">startTime</th>
-                <th style="width:120px">day</th>
-                <th style="width:120px">classlec</th>
-                <th style="width:120px">type</th>
-                <th style="width:120px">lecturer</th>
-                <th style="width:120px">CourseName</th>
-                <th style="width:30px">ID</th>
 
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <div id="LectureEr" style="float:right" >
+            <%--margin div--%>
+        </div>
+        <div style="margin-top: 60px;">
+        </div>
+        <div style="float: none; width: 100%">
+            <div id="divCourses">
+                <div class="input-group" style="float: right;">
+                    <input id="tbSearch" style="float: right;" type="text" aria-label="With textarea" onkeyup="SerchInTable()">
+                    <span style="float: right;" class="input-group-text">חיפוש על פי טקסט</span>
+                </div>
+                <table id="tCourses" class="table table-bordered table-sm">
+                    <thead>
 
+                        <tr>
+                            <th style="width: 30px">N#</th>
+                            <th style="width: 120px">ID</th>
+                            <th style="width: 120px">NameOfCourse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div id ="noLecture" style="float:none;display:none;">
-            <p class="h4">אין הרצאות זמינות לקורס זה</p>
+        <div id="divLecture" style="float: none; display: none;">
+
+            <table id="tLecture" class="table table-bordered table-sm" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th style="width: 120px">endTime</th>
+                        <th style="width: 120px">startTime</th>
+                        <th style="width: 120px">day</th>
+                        <th style="width: 120px">classlec</th>
+                        <th style="width: 120px">type</th>
+                        <th style="width: 120px">lecturer</th>
+                        <th style="width: 120px">CourseName</th>
+                        <th style="width: 30px">ID</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div id="LectureEr" style="float: right">
             </div>
-    </div>
-    
+
+            <div id="noLecture" style="float: none; display: none;">
+                <p class="h4">אין הרצאות זמינות לקורס זה</p>
+            </div>
+        </div>
+
 
     </div>
 </body>

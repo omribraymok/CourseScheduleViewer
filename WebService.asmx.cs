@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +7,6 @@ using System.Reflection;
 using System.Web;
 using System.Web.Services;
 using System.Xml.Linq;
-using Newtonsoft.Json;
 
 namespace LAB8
 {
@@ -27,7 +27,8 @@ namespace LAB8
         {
             //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
             //return File.ReadAllText(path);
-            temptable = CoursesArray;
+            var data = JsonConvert.DeserializeObject(CoursesArray);
+            Application["data"] = data;
         }
 
         [WebMethod]
@@ -36,7 +37,8 @@ namespace LAB8
             //string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Json\Courses.json");
             //return File.ReadAllText(path);
             //return JsonConvert.SerializeObject(temptable);
-            return temptable;
+            var temptablejson = JsonConvert.DeserializeObject(Application["data"].ToString());
+            return temptablejson.ToString();
         }
     }
 }

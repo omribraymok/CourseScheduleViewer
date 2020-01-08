@@ -5,62 +5,75 @@
 <head>
     <meta charset="utf-8" />
     <%--bootstrapcdn - in google - this is the palce we took this link, for the css class--%>
-    <link rel ="stylesheet" href ="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <script src="inc/jquery-3.0.0.min.js"></script>
-<%--    <script>
-
-        $(function () {
-            // request data from service
-            $.ajax({
-                url: "webservice.asmx/GetCourses",
-                //data: {
-                //    symbol: "BTC"
-                //},
-                type: 'GET',
-                success: function (res) {
-                    var s = res.documentElement.innerHTML;
-                    console.log(s);
-                    CreateTable(s);
-                },
-                error: function (er) {
-                    console.log(er);
-                }
-            });
-
-        })
-         </script>--%>
-
-        </head >
+</head>
 <body>
     <form id="form1" runat="server">
-        <div class ="container">
+        <div class="container">
             <asp:Panel runat="server" ID="pnlLogin">
-                <div style="width:300px;margin:50px auto">
+
+                <div style="width: 300px; margin: 50px auto">
                     <h1>Login form</h1>
-                     <div>
-                         <label>UserName</label>
-                         <asp:TextBox runat="server" ID="tbUsername" CssClass="form-control"></asp:TextBox>
-                     </div>
-
-                     <div>
-                         <label>Password</label>
-                         <asp:TextBox runat="server" ID="tbPassword" CssClass="form-control"></asp:TextBox>
-                     </div>
-
-                      <div style="margin-top:20px">
-                         <asp:Button runat="server" ID="btnLogin" CssClass="btn btn-info" Text="submit" OnClick="btnLogin_Click"></asp:Button>
-                     </div>
+                    <div>
+                        <label>UserName</label>
+                        <asp:TextBox runat="server" ID="tbUsername" CssClass="form-control"></asp:TextBox>
+                    </div>
 
                     <div>
-                         <asp:Label runat="server" ID="lbError" CssClass="text-warning" Text ="Worng Username or Password"></asp:Label>
-                     </div>
+                        <label>Password</label>
+                        <asp:TextBox runat="server" ID="tbPassword" CssClass="form-control"></asp:TextBox>
+                    </div>
 
+                    <div style="margin-top: 20px">
+                        <asp:Button runat="server" ID="btnLogin" CssClass="btn btn-info" Text="submit" OnClick="btnLogin_Click"></asp:Button>
+                    </div>
+
+                    <div>
+                        <asp:Label runat="server" ID="lbError" CssClass="text-warning" Text="Worng Username or Password"></asp:Label>
+                    </div>
+                    <div>
+                        dont have an account? :<b class="bu"></b><asp:LinkButton runat="server" CausesValidation="false"
+                            OnClick="goToRegister_Click" Text="Register"></asp:LinkButton>
+                    </div>
 
                 </div>
             </asp:Panel>
-            
+
         </div>
+
+        
+               <div class="container" style="width: 300px; margin: 50px auto">
+        <asp:Panel runat="server"  ID="pnlRegistr" Visible="false">
+
+            <h1>Register form</h1>
+            <div>
+                <label>UserName</label>
+                <asp:TextBox runat="server" ID="tbUsernameReg" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div>
+                <label>Password</label>
+                <asp:TextBox runat="server" ID="tbPasswordReg" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <div style="margin-top: 20px">
+                <asp:Button runat="server" ID="btnRegister" CssClass="btn btn-info" Text="submit" OnClick="btnRegister_Click"></asp:Button>
+            </div>
+
+            <div>
+                <asp:Label runat="server" ID="lbErrorReg" CssClass="text-warning" Text="Worng Username or Password"></asp:Label>
+            </div>
+
+            <div>
+                Remember your account? :<b class="bu"></b><asp:LinkButton runat="server" CausesValidation="false"
+                    OnClick="goToLogin_Click" Text="Login"></asp:LinkButton>
+            </div>
+
+        </asp:Panel>
+         </div>
     </form>
+
 
 </body>
 </html>
