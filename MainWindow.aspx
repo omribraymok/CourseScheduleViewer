@@ -30,11 +30,10 @@
             }
 
         .trClickable {
-            
         }
 
             .trClickable:hover {
-                 border: 1px solid blue;
+                border: 3px solid blue;
             }
     </style>
     <script>
@@ -103,6 +102,7 @@
 
                     $(tr).append(td);
                 });
+                $(tr).addClass("trClickable");
                 $("#tCourses").find("tbody").append(tr);
             });
         }
@@ -127,6 +127,7 @@
                         $(tr).append(td);
                     }
                     tr.attr('onclick', "LoadLectureIntoScheduleTable(this)");
+                    tr.addClass("trClickable");
                     $("#tLecture").find("tbody").append(tr);
                 }
 
@@ -227,7 +228,7 @@
             }
             );
             //clear all the dtCourse
-              var tdArray = $("#tScheduleLecture").find("tbody tr td");
+            var tdArray = $("#tScheduleLecture").find("tbody tr td");
             $.each(tdArray, function (tdindex, td) {
                 $(td).removeClass("dtCourse");
             }
