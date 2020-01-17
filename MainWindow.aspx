@@ -187,12 +187,14 @@
                 dataType: 'json',
                 type: 'POST',
                 success: function (res) {
-
                 },
                 error: function (er) {
-                    console.log(er);
+                    HideLoadSaveIndication();
+                    $("#SuccessSave").attr('style', "display:");
+                 setTimeout(HideSaveSuccIndication, 3000);
+
                 }
-            });
+            }).done();
 
         }
         function LoadScheduleTable() {
@@ -202,10 +204,15 @@
                 success: function (res) {
 
                     var s = res.documentElement.innerHTML;
-                    if (s == "") {
-                        window.alert("no saved courses");
+                    if (s == "" || s == "[]") {
+                        HideLoadSaveIndication();
+                        $("#FailLoad").attr('style', "display:");
+                        setTimeout(HideLoadFailIndication, 3000);
                     }
                     else {
+                        HideLoadSaveIndication();
+                        $("#SuccessLoad").attr('style', "display:");
+                        setTimeout(HideLoadsuccIndication, 3000);
                         ClearScheduleTable();
                         MyLectureInScheduleTable = JSON.parse(s);
                         for (var i = 0; i < MyLectureInScheduleTable.length; i++) {
@@ -219,6 +226,28 @@
             });
 
         }
+        function HideLoadSaveIndication()
+        {
+            $("#SuccessLoad").attr('style', "display:none");
+            $("#FailLoad").attr('style', "display:none");
+            $("#SuccessSave").attr('style', "display:none");
+        }
+
+        function HideLoadsuccIndication()
+        {
+            $("#SuccessLoad").attr('style', "display:none");
+        }
+
+         function HideLoadFailIndication()
+        {
+            $("#FailLoad").attr('style', "display:none");
+        }
+        function HideSaveSuccIndication()
+        {
+         $("#SuccessSave").attr('style', "display:none");
+        }
+
+
         function ClearScheduleTable() {
             MyLectureInScheduleTable = [];
             // clear all the label
@@ -565,11 +594,17 @@
                 <tbody>
                 </tbody>
             </table>
+            <div>
             <input type="button" class="btn btn-info" onclick="ClearScheduleTable()" value="Clear" />
-            <input type="button" class="btn btn-info" onclick="SaveScheduleTable()" value="Save" />
+            <input type="button" class="btn btn-info" onclick="SaveScheduleTable()" value="Save"  />
             <input type="button" class="btn btn-info" onclick="LoadScheduleTable()" value="Load" />
+            <div id="LoadSaveIndication" >
+            <label  id="SuccessLoad" class="text-success"  style="float: none; display: none;">Courses Load successfuly into The Table</label>
+             <label  id="FailLoad" class="text-danger"  style="float: none; display: none;">No Courses to Load , please Save first</label>
+            <label  id="SuccessSave" class="text-success"  style="float: none; display: none;">Courses Saved successfuly</label>
 
-
+            </div>
+            </div>
 
             <%--margin div--%>
         </div>

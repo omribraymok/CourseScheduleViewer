@@ -31,12 +31,12 @@ namespace LAB8
                 //return File.ReadAllText(path);
                 var scheduleTable = JsonConvert.DeserializeObject(CoursesArray);
                 var scheduleTablejson = JsonConvert.DeserializeObject(scheduleTable.ToString());
-
                 var userName = ((tbAccount)Session["Account"]).UserName;
-                tbAccount account = db.tbAccounts.FirstOrDefault(u => u.UserName == userName); 
+                tbAccount account = db.tbAccounts.FirstOrDefault(u => u.UserName == userName);
                 account.ScheduleTable = scheduleTablejson.ToString();
                 Session["Account"] = account;
                 db.SaveChanges();
+
             }
 
         }
