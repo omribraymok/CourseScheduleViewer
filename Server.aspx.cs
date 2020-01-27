@@ -21,6 +21,7 @@ namespace LAB8
             //ispostback - if we did sumbit post back = true; and then , we dont enter here again, only on first time
             if (!IsPostBack)
             {
+
                 if (Session["Account"] == null)
                 {
                     pnlLogin.Visible = true;
